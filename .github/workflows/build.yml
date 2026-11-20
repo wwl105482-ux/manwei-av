@@ -18,6 +18,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate script encoding
+        shell: powershell
+        run: |
+          $bad = @()
+          Get-ChildItem -Filter *.ps1 | ForEach-Object {
+            $bytes = [IO.File]::ReadAllBytes($_.FullName)
+            $hasBom = $bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF
+            $start = 0
+            if ($hasBom) { $start = 3 }
+            $hasNonAscii = $false
+            for ($i = $start; $i -lt $bytes.Length; $i++) {
+              if ($bytes[$i] -gt 127) { $hasNonAscii = $true; break }
+            }
+            if ($hasNonAscii -and (-not $hasBom)) { $bad += $_.Name }
+          }
+          if ($bad.Count -gt 0) {
+            throw ("These scripts contain non-ASCII text but no UTF-8 BOM: " + ($bad -join ', '))
+          }
+          Write-Host "script encoding ok"
+
       - name: Show toolchain
         shell: powershell
         run: |
