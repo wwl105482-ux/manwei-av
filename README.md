@@ -214,6 +214,8 @@ guardscan\
 
 ## 开源说明
 
+English overview: [`README.en.md`](README.en.md)（供审核者/海外用户快速了解项目）。
+
 - 许可证：**MIT**（见 `LICENSE`）。
 - 贡献方式与构建要求：`CONTRIBUTING.md`；安全问题：`SECURITY.md`。
 - CI：`.github/workflows/build.yml` 在 Windows 上构建、跑 `--selftest` 并上传产物。
