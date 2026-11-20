@@ -13,7 +13,7 @@ Manwei AV (满唯杀毒)
 **Repository URL**
 
 ```
-https://github.com/ww105482-ux/manwei-av
+https://github.com/wwl105482-ux/manwei-av
 ```
 
 **License**
