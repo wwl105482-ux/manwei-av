@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 # 把 dist 里的程序与规则复制到指定目录，并（可选）创建桌面快捷方式。
 # 这是“免安装/便携”部署脚本；需要写入“应用和功能”请用 build-installer.ps1 生成的安装包。
 param(
