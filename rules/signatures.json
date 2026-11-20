@@ -1,0 +1,192 @@
+{
+  "Version": "2026.11.20-1",
+  "Hashes": [
+    {
+      "Md5": "44d88612fea8a8f36de82e1278abb02f",
+      "Name": "EICAR.TestFile",
+      "Severity": "high",
+      "Description": "标准反病毒测试文件（EICAR 官方 MD5），仅用于验证引擎"
+    }
+  ],
+  "Strings": [
+    {
+      "Pattern": "GUARDSCAN-TEST-SAMPLE-ONLY",
+      "Encoding": "ascii",
+      "Name": "Test.SelfSample",
+      "Severity": "high",
+      "Description": "引擎自检用样本标记（非真实威胁，可安全删除）"
+    },
+    {
+      "Pattern": "stratum+tcp://",
+      "Encoding": "ascii",
+      "Name": "Miner.PoolString",
+      "Severity": "medium",
+      "Description": "挖矿程序常见的矿池连接串"
+    },
+    {
+      "Pattern": "xmrig",
+      "Encoding": "ascii",
+      "Name": "Miner.XMRig",
+      "Severity": "medium",
+      "Description": "门罗币挖矿程序特征"
+    },
+    {
+      "Pattern": "TraPlayFinder",
+      "Encoding": "ascii",
+      "Name": "Adware.PlayFinder",
+      "Severity": "high",
+      "Description": "游戏推广弹窗广告组件（成都奇鲁科技）"
+    }
+  ],
+  "Names": [
+    {
+      "Regex": "playfinder|traplayfinder",
+      "Name": "Adware.PlayFinder",
+      "Severity": "high",
+      "Description": "游戏推广弹窗广告程序"
+    },
+    {
+      "Regex": "^(360safe|360tray|360sd|360se|qhsafe|qhpcmgr|zhudongfangyu)",
+      "Name": "PUP.360",
+      "Severity": "medium",
+      "Description": "360 系捆绑推广组件"
+    },
+    {
+      "Regex": "ludashi|ldhelper|ldyun",
+      "Name": "PUP.Ludashi",
+      "Severity": "medium",
+      "Description": "鲁大师推广组件"
+    },
+    {
+      "Regex": "qqpcmgr",
+      "Name": "PUP.QQPCMgr",
+      "Severity": "medium",
+      "Description": "腾讯电脑管家企业版组件（个人机通常为捆绑安装）"
+    },
+    {
+      "Regex": "dllrepairtools|aicompanion|winzipgo",
+      "Name": "PUP.BundledAdware",
+      "Severity": "medium",
+      "Description": "同类捆绑推广工具（与本机 2026-11 清理过的家族一致）"
+    }
+  ],
+  "Behaviors": [
+    {
+      "Name": "Heur.ScriptDownloadCradle",
+      "Severity": "high",
+      "Description": "脚本包含“下载远程载荷 + 执行/隐藏/base64”的组合行为，常见于下载器与木马投放",
+      "Extensions": ".ps1,.psm1,.bat,.cmd,.vbs,.vbe,.js,.jse,.wsf,.wsh,.hta",
+      "MinHits": 2,
+      "Patterns": [
+        "(?i)downloadstring|downloadfile|downloaddata|invoke-webrequest|invoke-restmethod|start-bitstransfer|net[.]webclient",
+        "(?i)invoke-expression|(^|[^a-z])iex([^a-z]|$)",
+        "(?i)-enc(odedcommand)?[^a-z0-9]+[A-Za-z0-9+/=]{40,}",
+        "(?i)frombase64string",
+        "(?i)-windowstyle[^a-z0-9]+hidden|-w[^a-z0-9]+hidden"
+      ]
+    },
+    {
+      "Name": "Heur.ScriptLolbinDownload",
+      "Severity": "medium",
+      "Description": "用系统自带工具（certutil/bitsadmin/mshta/regsvr32/rundll32）下载或执行脚本",
+      "Extensions": ".ps1,.psm1,.bat,.cmd,.vbs,.vbe,.js,.jse,.wsf,.wsh,.hta",
+      "MinHits": 1,
+      "Patterns": [
+        "(?i)certutil([.]exe)?[^|]*-(urlcache|decode|decodehex)",
+        "(?i)bitsadmin([.]exe)?[^|]*(/transfer|/addfile)",
+        "(?i)mshta([.]exe)?[^a-z0-9]+(https?://|javascript:|vbscript:)",
+        "(?i)regsvr32([.]exe)?[^|]*(scrobj[.]dll|/i:https?://)",
+        "(?i)rundll32([.]exe)?[^|]*(javascript:|vbscript:)"
+      ]
+    },
+    {
+      "Name": "Heur.RansomwareShadowDelete",
+      "Severity": "high",
+      "Description": "删除卷影副本/备份并关闭启动修复，是勒索软件加密前的典型准备动作",
+      "Extensions": ".ps1,.psm1,.bat,.cmd,.vbs,.vbe,.js,.jse,.wsf,.wsh,.hta",
+      "MinHits": 1,
+      "Patterns": [
+        "(?i)vssadmin([.]exe)?[^|]*delete[^|]*shadows",
+        "(?i)wmic([.]exe)?[^|]*shadowcopy[^a-z0-9]+delete",
+        "(?i)bcdedit([.]exe)?[^|]*(recoveryenabled[^a-z0-9]+no|bootstatuspolicy[^a-z0-9]+ignoreallfailures)",
+        "(?i)wbadmin([.]exe)?[^|]*delete[^|]*(catalog|backup)"
+      ]
+    },
+    {
+      "Name": "Heur.DefenseEvasion",
+      "Severity": "high",
+      "Description": "尝试关闭 Defender 实时防护、添加排除项或清空事件日志",
+      "Extensions": ".ps1,.psm1,.bat,.cmd,.vbs,.vbe,.js,.jse,.wsf,.wsh,.hta",
+      "MinHits": 1,
+      "Patterns": [
+        "(?i)(set|add)-mppreference[^|]*-(disable|exclusion)",
+        "(?i)wevtutil([.]exe)?[^a-z0-9]+cl([^a-z0-9]|$)",
+        "(?i)clear-eventlog"
+      ]
+    },
+    {
+      "Name": "Heur.PersistenceScript",
+      "Severity": "medium",
+      "Description": "脚本同时使用多种自启动/服务创建方式，疑似持久化",
+      "Extensions": ".ps1,.psm1,.bat,.cmd,.vbs,.vbe,.js,.jse,.wsf,.wsh,.hta",
+      "MinHits": 2,
+      "Patterns": [
+        "(?i)schtasks([.]exe)?[^|]*(/create|/change)",
+        "(?i)(^|[^a-z])sc([.]exe)?[^a-z0-9]+create([^a-z0-9]|$)",
+        "(?i)new-service([^a-z0-9]|$)",
+        "(?i)reg([.]exe)?[^a-z0-9]+add[^|]*run([^a-z0-9]|$)"
+      ]
+    },
+    {
+      "Name": "HackTool.CredentialTheft",
+      "Severity": "high",
+      "Description": "凭据窃取工具特征（Mimikatz/LSASS dump/NTDS.dit）",
+      "Extensions": ".ps1,.psm1,.bat,.cmd,.vbs,.vbe,.js,.jse,.wsf,.wsh,.hta",
+      "MinHits": 1,
+      "Patterns": [
+        "(?i)mimikatz|sekurlsa::|lsadump::",
+        "(?i)procdump([.]exe)?[^|]*lsass",
+        "(?i)comsvcs[.]dll[^|]*minidump",
+        "(?i)ntds[.]dit"
+      ]
+    },
+    {
+      "Name": "Heur.AccountTamper",
+      "Severity": "medium",
+      "Description": "批量创建账号或提升权限、修改密码策略，疑似留后门",
+      "Extensions": ".ps1,.psm1,.bat,.cmd,.vbs,.vbe,.js,.jse,.wsf,.wsh,.hta",
+      "MinHits": 2,
+      "Patterns": [
+        "(?i)net[^a-z0-9]+user[^a-z0-9]+[^ ]+[^a-z0-9]+[^ ]+[^a-z0-9]+/add",
+        "(?i)net[^a-z0-9]+localgroup[^a-z0-9]+administrators[^|]*/add",
+        "(?i)net[^a-z0-9]+accounts[^|]*/maxpwage:unlimited"
+      ]
+    },
+    {
+      "Name": "HackTool.AmsiBypass",
+      "Severity": "high",
+      "Description": "绕过 AMSI 扫描的脚本特征",
+      "Extensions": ".ps1,.psm1,.bat,.cmd,.vbs,.vbe,.js,.jse,.wsf,.wsh,.hta",
+      "MinHits": 1,
+      "Patterns": [
+        "(?i)amsiinitfailed|amsiscanbuffer|amsiutils"
+      ]
+    }
+  ],
+  "Paths": [
+    {
+      "Contains": "\\AppData\\Roaming\\TraPlayFinder",
+      "Extensions": ".exe,.dll",
+      "Name": "Adware.PlayFinder",
+      "Severity": "high",
+      "Description": "广告组件安装目录"
+    },
+    {
+      "Contains": "\\AppData\\Local\\Temp\\",
+      "Extensions": ".scr,.pif,.com",
+      "Name": "Heur.TempExecutable",
+      "Severity": "high",
+      "Description": "临时目录中的屏幕保护/伪装可执行文件"
+    }
+  ]
+}

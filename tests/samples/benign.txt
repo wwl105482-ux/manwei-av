@@ -1,0 +1,3 @@
+A harmless text file for false-positive testing.
+It contains ordinary words: report, invoice, meeting, project, notes, summary.
+No executable content here.

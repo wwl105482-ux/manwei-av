@@ -1,0 +1,73 @@
+name: signpath
+
+# 这是开源免费签名（SignPath Foundation）的工作流模板。
+# 通过 Foundation 审核、并在仓库里配置好下面两个 secret 与一个变量之后才会真正执行：
+#   secrets.SIGNPATH_API_TOKEN
+#   secrets.SIGNPATH_ORGANIZATION_ID
+#   vars.SIGNPATH_ENABLED = 'true'
+# 详见 docs/SIGNING.md。
+
+on:
+  workflow_dispatch:
+  release:
+    types: [ published ]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  sign:
+    if: vars.SIGNPATH_ENABLED == 'true'
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build unsigned binaries
+        shell: powershell
+        run: |
+          powershell -ExecutionPolicy Bypass -File build.ps1
+          powershell -ExecutionPolicy Bypass -File build-installer.ps1
+
+      - name: Self test
+        shell: powershell
+        run: |
+          $out = & '.\dist\满唯杀毒.exe' --selftest 2>&1 | Out-String
+          Write-Host $out
+          if ($out -notmatch 'ALL PASS') { throw 'selftest failed' }
+
+      - name: Stage unsigned artifacts
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path unsigned -Force | Out-Null
+          Copy-Item 'dist\满唯杀毒.exe' unsigned\
+          Copy-Item 'dist\满唯杀毒-安装程序.exe' unsigned\
+          Copy-Item 'dist\rules\signatures.json' unsigned\
+
+      - name: Upload unsigned artifact
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-binaries
+          path: unsigned/*
+          if-no-files-found: error
+
+      - name: Submit signing request to SignPath
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ secrets.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: manwei-av
+          signing-policy-slug: release-signing
+          artifact-configuration-slug: default
+          github-artifact-id: ${{ steps.upload.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+
+      - name: Upload signed artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: signed-binaries
+          path: signed/*
+          if-no-files-found: error

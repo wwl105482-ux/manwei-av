@@ -1,0 +1,30 @@
+# 构建产物
+dist/
+release/
+*.zip
+
+# 生成的文件
+src/RulesHash.g.cs
+*.settings.json
+Reports/
+profile.log
+gui.log
+*.log
+
+# 本地证书与密钥（永远不要提交）
+*.pfx
+*.p12
+*.snk
+*.cer
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+bin/
+obj/
+
+# 规则备份
+rules/*.bak-*
+*.bak-*

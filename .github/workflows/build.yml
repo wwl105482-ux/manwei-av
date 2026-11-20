@@ -1,0 +1,53 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show toolchain
+        shell: powershell
+        run: |
+          $csc = Join-Path $env:SystemRoot 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
+          Write-Host "csc: $csc"
+          if (-not (Test-Path $csc)) { throw 'csc.exe not found' }
+
+      - name: Build
+        shell: powershell
+        run: powershell -ExecutionPolicy Bypass -File build.ps1
+
+      - name: Build installer
+        shell: powershell
+        run: powershell -ExecutionPolicy Bypass -File build-installer.ps1
+
+      - name: Self test
+        shell: powershell
+        run: |
+          $exe = Join-Path (Get-Location) 'dist\满唯杀毒.exe'
+          $out = & $exe --selftest 2>&1 | Out-String
+          Write-Host $out
+          if ($out -notmatch 'ALL PASS') { throw 'selftest failed' }
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: manwei-av-${{ github.sha }}
+          path: |
+            dist/满唯杀毒.exe
+            dist/满唯杀毒-安装程序.exe
+            dist/rules/signatures.json
+          if-no-files-found: error
+          retention-days: 14
