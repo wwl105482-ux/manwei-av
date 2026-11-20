@@ -56,7 +56,8 @@ jobs:
       - name: Self test
         shell: powershell
         run: |
-          $exe = Join-Path (Get-Location) 'dist\满唯杀毒.exe'
+          $name = -join ([char[]](0x6EE1,0x552F,0x6740,0x6BD2))
+          $exe = Join-Path (Get-Location) ('dist\' + $name + '.exe')
           $out = & $exe --selftest 2>&1 | Out-String
           Write-Host $out
           if ($out -notmatch 'ALL PASS') { throw 'selftest failed' }
@@ -66,8 +67,7 @@ jobs:
         with:
           name: manwei-av-${{ github.sha }}
           path: |
-            dist/满唯杀毒.exe
-            dist/满唯杀毒-安装程序.exe
+            dist/*.exe
             dist/rules/signatures.json
           if-no-files-found: error
           retention-days: 14

@@ -33,17 +33,18 @@ jobs:
       - name: Self test
         shell: powershell
         run: |
-          $out = & '.\dist\满唯杀毒.exe' --selftest 2>&1 | Out-String
+          $name = -join ([char[]](0x6EE1,0x552F,0x6740,0x6BD2))
+          $out = & (Join-Path 'dist' ($name + '.exe')) --selftest 2>&1 | Out-String
           Write-Host $out
           if ($out -notmatch 'ALL PASS') { throw 'selftest failed' }
 
       - name: Stage unsigned artifacts
         shell: powershell
         run: |
+          $name = -join ([char[]](0x6EE1,0x552F,0x6740,0x6BD2))
           New-Item -ItemType Directory -Path unsigned -Force | Out-Null
-          Copy-Item 'dist\满唯杀毒.exe' unsigned\
-          Copy-Item 'dist\满唯杀毒-安装程序.exe' unsigned\
-          Copy-Item 'dist\rules\signatures.json' unsigned\
+          Copy-Item (Join-Path 'dist' ($name + '.exe')) unsigned\
+          Copy-Item 'dist\*-*.exe' unsigned\
 
       - name: Upload unsigned artifact
         id: upload
