@@ -6,7 +6,7 @@
 
 | 文件 | 说明 |
 | --- | --- |
-| `满唯杀毒-安装程序.exe` | 推荐。双击安装，写入“应用和功能”，可正常卸载；有管理员权限时装到 `C:\Program Files\满唯杀毒`，没有时装到 `%LOCALAPPDATA%\Programs\满唯杀毒` |
+| `manwei-av-setup.exe` | 推荐。双击安装，写入“应用和功能”，可正常卸载；有管理员权限时装到 `C:\Program Files\满唯杀毒`，没有时装到 `%LOCALAPPDATA%\Programs\满唯杀毒` |
 | `满唯杀毒.exe` | 便携版，需与 `rules\signatures.json` 放在同一目录 |
 
 ## 功能
