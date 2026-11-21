@@ -1,5 +1,7 @@
 # 满唯杀毒
 
+[![build](https://github.com/wwl105482-ux/manwei-av/actions/workflows/build.yml/badge.svg)](https://github.com/wwl105482-ux/manwei-av/actions/workflows/build.yml)
+
 轻量级本地查杀与启动项审计工具（Windows，单 exe，无需安装）。
 
 满唯杀毒 是一个自己写的"小杀毒软件"：不联网、无内核驱动、无后台常驻防火墙，只做两件事——
