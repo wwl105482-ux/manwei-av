@@ -36,6 +36,10 @@ Windows 10 / 11（32 位或 64 位），自带 .NET Framework 4.8，无需安装
 
 发布产物由 GitHub Actions 在本仓库内构建，可下载 `manwei-av-<sha>` artifact 或在本仓库 Release 附件中核对 SHA256。
 
+## 代码签名
+
+本项目使用 [SignPath Foundation](https://signpath.org) 提供的免费代码签名。
+
 ## English
 
 Manwei AV is a small offline Windows risk scanner: local signature/hash checks, behavior
