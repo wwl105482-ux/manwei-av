@@ -12,6 +12,12 @@
 
 ## 功能
 
+![扫描结果](docs/screenshots/scan-small.png)
+
+![大文件扫描](docs/screenshots/scan-big.png)
+
+![启动项审计](docs/screenshots/audit.png)
+
 **扫描**
 - 快速扫描：Temp、下载、桌面、AppData\Roaming、ProgramData、启动文件夹、Public，**并自动覆盖其它固定磁盘（D: 等）的 Temp / 缓存 / 下载类目录**（如 `Cache`、`QMDownload`、`QLDownload`、`qycache`、`Backup\Downloads`）
 - 全盘扫描（C、D 或自选盘）
